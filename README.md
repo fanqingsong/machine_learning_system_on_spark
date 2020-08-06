@@ -56,6 +56,10 @@ category | name | comment
 ## Quick Start
 
 ```bash
+# Install ml dependencies
+cd ml
+pip3 install -r requirements.txt
+
 # Install dependencies
 cd ./frontend
 npm install

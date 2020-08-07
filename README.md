@@ -56,9 +56,15 @@ category | name | comment
 ## Quick Start
 
 ```bash
-# Install ml dependencies
 cd ml
+# Install ml dependencies
 pip3 install -r requirements.txt
+# start redis server
+redis-server
+# start celery worker
+celery -A celerytask worker -l info
+# test celery worker running
+ python3 celerytask.py
 
 # Install dependencies
 cd ./frontend

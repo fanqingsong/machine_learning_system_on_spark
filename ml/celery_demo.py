@@ -14,7 +14,7 @@ backend = 'redis://localhost:6379/2'
 # 参数1 自动生成任务名的前缀
 # 参数2 broker 是我们的redis的消息中间件
 # 参数3 backend 用来存储我们的任务结果的
-app = Celery('celerytask', broker=broker, backend=backend)
+app = Celery('celery_demo', broker=broker, backend=backend)
 
 #
 async def async_function(param1, param2):

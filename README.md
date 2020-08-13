@@ -59,12 +59,26 @@ category | name | comment
 cd ml
 # Install ml dependencies
 pip3 install -r requirements.txt
+
+Note: use this command to make new requirements.txt, if new package is installed.
+pip3 freeze > requirements.txt
+
+# install redis
+sudo apt-get install redis-server
+
 # start redis server
 redis-server
+
 # start celery worker
 celery -A celerytask worker -l info
+
 # test celery worker running
- python3 celerytask.py
+python3 celerytask.py
+
+# test kmeans stand-alone code
+python3 kmeans_demo.py
+
+
 
 # Install dependencies
 cd ./frontend

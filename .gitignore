@@ -1,5 +1,8 @@
 node_modules
 
+ml/kmeans_model/
+ml/dump.rdb
+
 ### Django ###
 *.log
 *.pot

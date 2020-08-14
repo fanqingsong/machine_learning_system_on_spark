@@ -60,24 +60,17 @@ cd ml
 # Install ml dependencies
 pip3 install -r requirements.txt
 
-Note: use this command to make new requirements.txt, if new package is installed.
-pip3 freeze > requirements.txt
-
 # install redis
 sudo apt-get install redis-server
 
 # start redis server
 redis-server
 
-# start celery worker
-celery -A celerytask worker -l info
+# start celery worker for ml
+celery -A iris_cluster worker -l info
 
-# test celery worker running
-python3 celerytask.py
-
-# test kmeans stand-alone code
-python3 kmeans_demo.py
-
+# test ml celery worker running
+python3 iris_cluster.py
 
 
 # Install dependencies
@@ -95,6 +88,21 @@ pipenv install
 
 # Serve API on localhost:8000
 pipenv run python manage.py runserver
+
+Note:
+（1）use this command to make new requirements.txt, if new package is installed.
+pip3 freeze > requirements.txt
+
+（2）the following command for ml test
+cd ml
+# start celery worker for test
+celery -A celerytask worker -l info
+
+# test celery worker running
+python3 celerytask.py
+
+# test kmeans stand-alone code
+python3 kmeans_demo.py
 
 ```
 

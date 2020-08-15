@@ -12,6 +12,8 @@ from pyspark.sql import SQLContext
 from pyspark import sql
 from numpy import array
 from pyspark.sql import Row
+import csv
+from pprint import pprint
 
 # 实例化一个Celery
 broker = 'redis://localhost:6379/1'
@@ -31,9 +33,9 @@ class IRIS_Cluster():
         self._init_model()
 
 
-    def train(self):
-        kmeans = self._get_kmeans_instance()
-        df = self._get_train_df()
+    def train(self, k, train_data):
+        kmeans = self._get_kmeans_instance(k)
+        df = self._get_train_df(train_data)
 
         kmeansmodel = kmeans.fit(df)
 
@@ -82,23 +84,27 @@ class IRIS_Cluster():
 
         return df
 
-    def _get_train_df(self):
-        sc = self._sparkcontext
-        rawData = sc.textFile("file:///root/win10/mine/machine_learning_system_on_spark/ml/iris.txt")
+    def _get_train_df(self, train_data):
+        if not train_data:
+            print("train_data must be inputed")
 
-        def f(x):
-            rel = {}
-            rel['features'] = Vectors.dense(float(x[0]), float(x[1]), float(x[2]), float(x[3]))
-            return rel
+        Features = Row('features')
 
-        df = rawData.map(lambda line: line.split(',')).map(lambda p: Row(**f(p))).toDF()
+        data = []
+        for one_data in train_data:
+            one_features = Features(Vectors.dense(one_data))
+            data.append(one_features)
+
+        df = self._sqlcontext.createDataFrame(data)
+
+        df.show()
 
         return df
 
-    def _get_kmeans_instance(self):
+    def _get_kmeans_instance(self, k):
         kmeans = KMeans()
 
-        kmeans.setK(3).setFeaturesCol('features').setPredictionCol('prediction')
+        kmeans.setK(k).setFeaturesCol('features').setPredictionCol('prediction')
 
         return kmeans
 
@@ -128,9 +134,9 @@ class IRIS_Cluster():
 iris_cluster = IRIS_Cluster()
 
 @app.task()
-def train():
+def train(k, train_data):
     print('Enter train function ...')
-    iris_cluster.train()
+    iris_cluster.train(k, train_data)
 
     return 0
 
@@ -141,13 +147,28 @@ def predict(one_features):
 
     return result
 
+# for test
+def _get_train_data():
+    with open('./iris.txt', 'r') as f:  # 采用b的方式处理可以省去很多问题
+        reader = csv.reader(f)
 
+        train_data = []
+        for row in reader:
+            # do something with row, such as row[0],row[1]
+            #print(row[0])
+            one_features = [float(row[0]), float(row[1]), float(row[2]), float(row[3])]
+            train_data.append(one_features)
+
+        pprint(train_data)
+        return train_data
 
 if __name__ == '__main__':
     # 这里生产的任务不可用，导入的模块不能包含task任务。会报错
     print("Start Task ...")
 
-    r = train.delay()
+    train_data = _get_train_data()
+
+    r = train.delay(3, train_data)
     print("r=", r.get())
 
     one_feature = [5.1, 3.5, 1.4, 0.2]

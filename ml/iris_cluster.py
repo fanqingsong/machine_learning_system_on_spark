@@ -10,6 +10,8 @@ from pyspark import SparkConf, SparkContext
 from pyspark.sql import SparkSession
 from pyspark.sql import SQLContext
 from pyspark import sql
+from numpy import array
+from pyspark.sql import Row
 
 # 实例化一个Celery
 broker = 'redis://localhost:6379/1'
@@ -40,12 +42,26 @@ class IRIS_Cluster():
 
         self._print_after_train(df)
 
+        Features = Row('features')
+        one_feature = Features(Vectors.dense(5.1, 3.5, 1.4, 0.2))
+        data = [one_feature]
+        df = self._sqlcontext.createDataFrame(data)
+
+        print("------------------------")
+        transformed = kmeansmodel.transform(df)
+        results = transformed.collect()
+        print(results)
+        for item in results:
+            print(str(item[0]) + ' is predcted as cluster' + str(item[1]))
+
     def predict(self, features):
         if self._kmeans_model == None:
             print("no model, train first.")
             return
 
-        return self._kmeans_model.transform(features)
+        data = array(features)
+
+        return self._kmeans_model.predict(data)
 
     def _init_sparkcontext(self):
         spark_conf = SparkConf().setAppName("iris_cluster")
@@ -55,9 +71,7 @@ class IRIS_Cluster():
 
         self._sparkcontext = sc
 
-        sqlContext = sql.SQLContext(sc)
-
-        self._sqlcontext = sqlContext
+        self._sqlcontext = SQLContext(sc)
 
     def _get_train_df(self):
         sc = self._sparkcontext
@@ -107,6 +121,9 @@ def train():
     iris_cluster = IRIS_Cluster()
 
     iris_cluster.train()
+
+    # result = iris_cluster.predict([5.1, 3.5, 1.4, 0.2])
+    # print("result=", result)
     return 0
 
 @app.task()

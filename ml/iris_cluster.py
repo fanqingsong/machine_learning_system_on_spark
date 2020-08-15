@@ -28,7 +28,7 @@ class IRIS_Cluster():
 
         self._model_path = "./kmeans_model"
         self._kmeans_model = None
-        #self._init_model()
+        self._init_model()
 
 
     def train(self):
@@ -42,26 +42,27 @@ class IRIS_Cluster():
 
         self._print_after_train(df)
 
-        Features = Row('features')
-        one_feature = Features(Vectors.dense(5.1, 3.5, 1.4, 0.2))
-        data = [one_feature]
-        df = self._sqlcontext.createDataFrame(data)
+    def predict(self, one_features):
+        print("enter predict")
 
-        print("------------------------")
-        transformed = kmeansmodel.transform(df)
-        results = transformed.collect()
-        print(results)
-        for item in results:
-            print(str(item[0]) + ' is predcted as cluster' + str(item[1]))
-
-    def predict(self, features):
         if self._kmeans_model == None:
             print("no model, train first.")
             return
 
-        data = array(features)
+        df = self._get_predict_df(one_features)
 
-        return self._kmeans_model.predict(data)
+        transformed = self._kmeans_model.transform(df)
+        transformed.show()
+        results = transformed.collect()
+        print(results)
+
+        predicted_cluster = None
+
+        for item in results:
+            print(str(item[0]) + ' is predcted as cluster' + str(item[1]))
+            predicted_cluster = item[1]
+
+        return predicted_cluster
 
     def _init_sparkcontext(self):
         spark_conf = SparkConf().setAppName("iris_cluster")
@@ -72,6 +73,14 @@ class IRIS_Cluster():
         self._sparkcontext = sc
 
         self._sqlcontext = SQLContext(sc)
+
+    def _get_predict_df(self, one_features):
+        Features = Row('features')
+        one_feature = Features(Vectors.dense(one_features))
+        data = [one_feature]
+        df = self._sqlcontext.createDataFrame(data)
+
+        return df
 
     def _get_train_df(self):
         sc = self._sparkcontext
@@ -115,23 +124,20 @@ class IRIS_Cluster():
         for item in results2:
             print(item)
 
+
+iris_cluster = IRIS_Cluster()
+
 @app.task()
 def train():
     print('Enter train function ...')
-    iris_cluster = IRIS_Cluster()
-
     iris_cluster.train()
 
-    # result = iris_cluster.predict([5.1, 3.5, 1.4, 0.2])
-    # print("result=", result)
     return 0
 
 @app.task()
-def predict(feature):
+def predict(one_features):
     print('Enter predict function ...')
-    iris_cluster = IRIS_Cluster()
-
-    result = iris_cluster.predict([5.1,3.5,1.4,0.2])
+    result = iris_cluster.predict(one_features)
 
     return result
 
@@ -141,16 +147,13 @@ if __name__ == '__main__':
     # 这里生产的任务不可用，导入的模块不能包含task任务。会报错
     print("Start Task ...")
 
-    def on_result_ready(result):
-        print('Received result for id %r: %r' % (result.id, result.result,))
-
-    data = [
-        [5.1,3.5,1.4,0.2,'Iris-setosa']
-    ]
-
     r = train.delay()
-
     print("r=", r.get())
+
+    one_feature = [5.1, 3.5, 1.4, 0.2]
+    r = predict.delay(one_feature)
+    print(one_feature, ", cluster=", r.get())
+
 
     time.sleep(20)
     #

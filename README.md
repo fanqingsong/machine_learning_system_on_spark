@@ -56,45 +56,43 @@ category | name | comment
 ## Quick Start
 
 ```bash
-cd ml
-# Install ml dependencies
+#global preparation
+# python3.5 install
+wget https://www.python.org/ftp/python/3.5.3/Python-3.5.3.tgz
+tar -xvzf Python-3.5.3.tgz
+cd Python-3.5.3
+./configure
+make && make install
+
+# Install python package
 pip3 install -r requirements.txt
 
 # install redis
 sudo apt-get install redis-server
-
 # start redis server
 redis-server
 
-# start celery worker for ml
-celery -A iris_cluster worker -l info
-
-# test ml celery worker running
-python3 iris_cluster.py
-
-
-# Install dependencies
+# prepare for frontend
 cd ./frontend
+# Install dependencies
 npm install
-
 # Build for production
 npm run build
 
+# start celery worker and django
+cd ./backend
+# start celery worker for django
+celery worker -A config -l debug
+# Server on localhost:8000
+python3 manage.py runserver
 
-# Install dependencies
-cd ../backend
-pip3 install pipenv
-pipenv install
-
-# Serve API on localhost:8000
-pipenv run python manage.py runserver
 
 Note:
 （1）use this command to make new requirements.txt, if new package is installed.
 pip3 freeze > requirements.txt
 
 （2）the following command for ml test
-cd ml
+cd ml_celery_research
 # start celery worker for test
 celery -A celerytask worker -l info
 
@@ -103,6 +101,59 @@ python3 celerytask.py
 
 # test kmeans stand-alone code
 python3 kmeans_demo.py
+
+# start celery worker for ml
+celery -A iris_cluster worker -l info
+
+# test ml celery worker running
+python3 iris_cluster.py
+
+(3) python version change
+
+sudo pip3 uninstall pip && sudo apt install python3-pip --reinstall
+or
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python get-pip.py
+
+from
+https://zhuanlan.zhihu.com/p/37473690
+
+(5) python3.5 install
+wget https://www.python.org/ftp/python/3.5.3/Python-3.5.3.tgz
+tar -xvzf Python-3.5.3.tgz
+cd Python-3.5.3
+./configure
+make && make install
+
+from
+https://www.jianshu.com/p/95bd2622c8d5
+
+(6) sqlite3 error solution
+# sqlite install
+wget https://www.sqlite.org/2017/sqlite-autoconf-3170000.tar.gz --no-check-certificate
+tar xf  sqlite-autoconf-3170000.tar.gz
+cd sqlite-autoconf-3170000/
+./configure --prefix=/usr/local/sqlite3 --disable-static --enable-fts5 --enable-json1 CFLAGS="-g -O2 -DSQLITE_ENABLE_FTS3=1 -DSQLITE_ENABLE_FTS4=1 -DSQLITE_ENABLE_RTREE=1"
+make && make install
+
+python install
+cd Python-3.5.3
+LD_RUN_PATH=/usr/local/sqlite3/lib ./configure LDFLAGS="-L/usr/local/sqlite3/lib" CPPFLAGS="-I /usr/local/sqlite3/include"
+LD_RUN_PATH=/usr/local/sqlite3/lib make
+LD_RUN_PATH=/usr/local/sqlite3/lib sudo make install
+
+from
+https://www.cnblogs.com/i1991/p/9497259.html
+
+(7) python specific version install & pipenv usage
+apt-get update
+apt-get install python3.7
+pip3 install pipenv
+pipenv install
+
+(8) django and celery integration
+https://www.pythonf.cn/read/7143
+https://www.cnblogs.com/wdliu/p/9530219.html
 
 ```
 

@@ -8,6 +8,10 @@ from .serializers import IrisSerializer
 from sklearn.cluster import KMeans
 from sklearn.externals import joblib
 
+from .mltask import add
+from celery import result
+import time
+
 import json
 import numpy
 
@@ -43,6 +47,19 @@ class IrisTrain(APIView):
 
     def post(self, request, format=None):
         print("--------------- IrisTrain post --------")
+
+        res = add.delay(1, 3)
+        print("----------", 'task_id = ', res.task_id)
+        task_id = res.task_id
+        print("----------", 'task = ', res)
+
+        time.sleep(1)
+        ar = result.AsyncResult(task_id)
+        if ar.ready():
+            print({'status': ar.state, 'result': ar.get()})
+        else:
+            print({'status': ar.state, 'result': ''})
+
         print(request.data)
 
         n_clusters = request.data["cluster_number"]

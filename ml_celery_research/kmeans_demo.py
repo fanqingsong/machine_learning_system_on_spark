@@ -11,7 +11,7 @@ sc = SparkContext(conf=spark_conf)
 sqlContext = sql.SQLContext(sc)
 sc.setLogLevel("ERROR")
 
-rawData = sc.textFile("file:///root/win10/mine/machine_learning_system_on_spark/ml/iris.txt")
+rawData = sc.textFile("file:///root/win10/mine/machine_learning_system_on_spark/ml_celery_research/iris.txt")
 def f(x):
     rel = {}
     rel['features'] = Vectors.dense(float(x[0]),float(x[1]),float(x[2]),float(x[3]))

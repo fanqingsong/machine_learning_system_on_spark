@@ -1,9 +1,9 @@
 node_modules
 
-/ml/kmeans_model/
-/ml/kmeans/
-/ml/spark-warehouse/
-/ml/dump.rdb
+/ml_celery_research/kmeans_model/
+/ml_celery_research/kmeans/
+/ml_celery_research/spark-warehouse/
+/ml_celery_research/dump.rdb
 
 ### Django ###
 *.log

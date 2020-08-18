@@ -5,9 +5,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import IrisSerializer
 
-from sklearn.cluster import KMeans
-from sklearn.externals import joblib
-
 from .mltask import train, predict
 
 from celery import result

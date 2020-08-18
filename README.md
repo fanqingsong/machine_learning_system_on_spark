@@ -53,40 +53,65 @@ category | name | comment
  backend | djangorestframework | restful framework
  backend | sklearn | machine learning tool
 
-## Quick Start
+## Install
+
+### python3.5 install
 
 ```bash
-#global preparation
-# python3.5 install
 wget https://www.python.org/ftp/python/3.5.3/Python-3.5.3.tgz
 tar -xvzf Python-3.5.3.tgz
 cd Python-3.5.3
 ./configure
 make && make install
+```
 
-# Install python package
+### Install python package
+```bash
 pip3 install -r requirements.txt
+```
 
-# install redis
+### install redis
+```bash
 sudo apt-get install redis-server
-# start redis server
-redis-server
+```
 
-# prepare for frontend
+### Spark Install
+[reference](http://dblab.xmu.edu.cn/blog/1307-2/)
+
+
+## Run
+
+### start redis server
+
+```bash
+redis-server
+```
+
+### frontend build
+
+```bash
 cd ./frontend
 # Install dependencies
 npm install
 # Build for production
 npm run build
+```
 
-# start celery worker and django
+### start celery worker for django
+
+```bash
 cd ./backend
-# start celery worker for django
 celery worker -A config -l debug
-# Server on localhost:8000
+```
+
+### start Server on localhost:8000
+
+```bash
+cd ./backend
 python3 manage.py runserver
+```
 
-
+```bash
 Note:
 （1）use this command to make new requirements.txt, if new package is installed.
 pip3 freeze > requirements.txt

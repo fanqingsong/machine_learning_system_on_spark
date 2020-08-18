@@ -81,32 +81,20 @@ class IrisTrain(APIView):
         print("------------- train over!! ------------")
         print(train_fit_data)
 
-        #
-        # # cluster result
-        # labels = model.predict(irisDataTrain)
-        #
-        # print("cluster result")
-        # print(labels)
-        #
-        # print("========================")
-        #
-        # # transfer data to client
-        # irisDataDict =  [
-        #     {"sepal_len": oneIris.sepal_len, "sepal_width": oneIris.sepal_width, "petal_len": oneIris.petal_len, "petal_width": oneIris.petal_width}
-        #     for oneIris in irisObjects
-        # ]
-        #
-        # print(irisDataDict[0])
-        # print(len(irisDataDict))
-        #
-        # for i in range(0, len(irisDataDict)):
-        #     irisDataDict[i]["cluster"] = labels[i]
-        #
-        # print(irisDataDict[0])
-        #
-        # respData = json.dumps(irisDataDict, cls=MyEncoder)
+        # transfer data to client
+        irisDataDict = [
+            {"sepal_len": one_fit_data['features'][0],
+             "sepal_width": one_fit_data['features'][1],
+             "petal_len": one_fit_data['features'][2],
+             "petal_width": one_fit_data['features'][3],
+             "cluster": one_fit_data['prediction']}
+            for one_fit_data in train_fit_data
+        ]
 
-        respData = "ok"
+        print(irisDataDict[0])
+        print(len(irisDataDict))
+
+        respData = json.dumps(irisDataDict, cls=MyEncoder)
 
         return Response(respData, status=status.HTTP_201_CREATED)
 
@@ -126,30 +114,16 @@ class IrisPredict(APIView):
 
         print("sepal_len=%s" % sepal_len)
 
+        one_feature = [sepal_len, sepal_width, petal_len, petal_width]
 
-        irisDataTrain = [[sepal_len, sepal_width, petal_len, petal_width]]
-
-        # test data
-        print("delgation data print")
-        print(irisDataTrain[0])
-
-        # test saved prediction
-        model = joblib.load('model.kmeans')
-
-        # cluster result
-        labels = model.predict(irisDataTrain)
-
-        print("cluster result")
-        print(labels)
-
-        print("========================")
+        predict_promise = predict.delay(one_feature)
+        prediction = predict_promise.get()
+        print(one_feature, ", cluster=", prediction)
 
         # transfer data to client
         irisDataPredict = {
-            "predicted_cluster": labels[0]
+            "predicted_cluster": prediction
         }
-
-        print(irisDataPredict["predicted_cluster"])
 
         respData = json.dumps(irisDataPredict, cls=MyEncoder)
 

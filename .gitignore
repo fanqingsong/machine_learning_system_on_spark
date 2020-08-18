@@ -5,6 +5,9 @@ node_modules
 /ml_celery_research/spark-warehouse/
 /ml_celery_research/dump.rdb
 
+backend/kmeans_model/
+
+
 ### Django ###
 *.log
 *.pot

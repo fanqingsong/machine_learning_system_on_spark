@@ -8,12 +8,13 @@ from .serializers import IrisSerializer
 from sklearn.cluster import KMeans
 from sklearn.externals import joblib
 
-from .mltask import add
+from .mltask import train, predict
+
 from celery import result
 import time
-
 import json
 import numpy
+
 
 # Iris Viewset
 class IrisViewSet(viewsets.ModelViewSet):
@@ -48,68 +49,64 @@ class IrisTrain(APIView):
     def post(self, request, format=None):
         print("--------------- IrisTrain post --------")
 
-        res = add.delay(1, 3)
-        print("----------", 'task_id = ', res.task_id)
-        task_id = res.task_id
-        print("----------", 'task = ', res)
-
-        time.sleep(1)
-        ar = result.AsyncResult(task_id)
-        if ar.ready():
-            print({'status': ar.state, 'result': ar.get()})
-        else:
-            print({'status': ar.state, 'result': ''})
+        #
+        # res = add.delay(1, 2)
+        # print("----------", 'task_id = ', res.task_id)
+        # task_id = res.task_id
+        # print("----------", 'task = ', res)
+        #
+        # time.sleep(1)
+        # ar = result.AsyncResult(task_id)
+        # if ar.ready():
+        #     print({'status': ar.state, 'result': ar.get()})
+        # else:
+        #     print({'status': ar.state, 'result': ''})
 
         print(request.data)
 
         n_clusters = request.data["cluster_number"]
         n_clusters = int(n_clusters)
-
         print("n_cluster=%d" % n_clusters)
 
-        model = KMeans(n_clusters=n_clusters)
-
         irisObjects = Iris.objects.all()
-
         irisDataTrain = [[oneIris.sepal_len, oneIris.sepal_width, oneIris.petal_len, oneIris.petal_width] for oneIris in irisObjects]
+        print("------- train data ----------")
+        print(irisDataTrain)
 
-        # test data
-        print("delgation data print")
-        print(irisDataTrain[0])
+        # start train process
+        train_promise = train.delay(n_clusters, irisDataTrain)
 
-        model.fit(irisDataTrain)
+        # wait for train over
+        train_fit_data = train_promise.get()
+        print("------------- train over!! ------------")
+        print(train_fit_data)
 
-        # save model for prediction
-        joblib.dump(model, 'model.kmeans')
+        #
+        # # cluster result
+        # labels = model.predict(irisDataTrain)
+        #
+        # print("cluster result")
+        # print(labels)
+        #
+        # print("========================")
+        #
+        # # transfer data to client
+        # irisDataDict =  [
+        #     {"sepal_len": oneIris.sepal_len, "sepal_width": oneIris.sepal_width, "petal_len": oneIris.petal_len, "petal_width": oneIris.petal_width}
+        #     for oneIris in irisObjects
+        # ]
+        #
+        # print(irisDataDict[0])
+        # print(len(irisDataDict))
+        #
+        # for i in range(0, len(irisDataDict)):
+        #     irisDataDict[i]["cluster"] = labels[i]
+        #
+        # print(irisDataDict[0])
+        #
+        # respData = json.dumps(irisDataDict, cls=MyEncoder)
 
-        # test saved prediction
-        model = joblib.load('model.kmeans')
-
-        # cluster result
-        labels = model.predict(irisDataTrain)
-
-        print("cluster result")
-        print(labels)
-
-        print("========================")
-
-        # transfer data to client
-        irisDataDict =  [
-            {"sepal_len": oneIris.sepal_len, "sepal_width": oneIris.sepal_width, "petal_len": oneIris.petal_len, "petal_width": oneIris.petal_width}
-            for oneIris in irisObjects
-        ]
-
-        print(irisDataDict[0])
-        print(len(irisDataDict))
-
-        for i in range(0, len(irisDataDict)):
-            irisDataDict[i]["cluster"] = labels[i]
-
-        print(irisDataDict[0])
-
-        respData = json.dumps(irisDataDict, cls=MyEncoder)
-
-        #respData = "ok"
+        respData = "ok"
 
         return Response(respData, status=status.HTTP_201_CREATED)
 

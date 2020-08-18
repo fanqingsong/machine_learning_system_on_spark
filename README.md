@@ -111,8 +111,21 @@ cd ./backend
 python3 manage.py runserver
 ```
 
+## snapshot
+
+### login page
+![avatar](./snapshot/loginpage.png)
+
+### model train page
+![avatar](./snapshot/train.png)
+
+### prediction page
+![avatar](./snapshot/predict.png)
+
+
+## Memo:
+
 ```bash
-Note:
 （1）use this command to make new requirements.txt, if new package is installed.
 pip3 freeze > requirements.txt
 
@@ -181,16 +194,3 @@ https://www.pythonf.cn/read/7143
 https://www.cnblogs.com/wdliu/p/9530219.html
 
 ```
-
-## snapshot
-
-### login page
-![avatar](./snapshot/loginpage.png)
-
-### model train page
-![avatar](./snapshot/train.png)
-
-### prediction page
-![avatar](./snapshot/predict.png)
-
-

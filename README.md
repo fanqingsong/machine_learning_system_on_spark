@@ -31,7 +31,7 @@ The data set is the classic iris data, which is only for demo, and this project 
 
 * model train
 > input cluster number
-> train a cluster model using sklearn-kmeans library
+> train a cluster model using spark.ml library
 > inspect cluster result through sepal and petal scatter
 
 * prediction
@@ -51,7 +51,7 @@ category | name | comment
  backend | django | backend framework
  backend | django-rest-knox | authentication library
  backend | djangorestframework | restful framework
- backend | sklearn | machine learning tool
+ backend | spark.ml | machine learning tool
 
 ## Install
 

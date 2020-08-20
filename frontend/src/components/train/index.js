@@ -26,12 +26,26 @@ export class IrisExplore extends Component {
     this.props.getIris();
   };
 
-  startTrain(){
-    console.log("======")
+  queryTrainStatus(train_task_id){
+     console.log("query train model..., with train task id=", train_task_id)
 
-    // axios.get("/api/train").then((resp)=>{
-    //   console.log("data=", resp.data);
-    // })
+     axios.get(`/api/train?train_task_id=${train_task_id}`).then((resp)=>{
+        console.log("data=", resp.data);
+        let respData = JSON.parse(resp.data);
+        let status = respData['status']
+        if ("SUCCESS" === status) {
+            let irisData = respData['result'];
+            this.props.setIrisCluster(irisData);
+        } else if ("FAILURE" === status) {
+            console.log("train process failed!!");
+        } else {
+            this.queryTrainStatus(train_task_id)
+        }
+     })
+  }
+
+  startTrain(){
+    console.log("======start train =======")
 
     this.props.setIrisCluster([]);
 
@@ -39,8 +53,12 @@ export class IrisExplore extends Component {
 
     axios.post("/api/train", {cluster_number: cluster_number}).then((resp)=>{
       console.log("data=", resp.data);
-      let irisData = JSON.parse(resp.data);
-      this.props.setIrisCluster(irisData);
+
+      let respData = JSON.parse(resp.data);
+
+      let train_task_id = respData["train_task_id"]
+
+      this.queryTrainStatus(train_task_id)
     })
   }
 

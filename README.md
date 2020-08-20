@@ -38,10 +38,23 @@ The data set is the classic iris data, which is only for demo, and this project 
 > input iris sepal and petal attributes
 > predict iris cluster
 
-## technology stack
+## Architecture
 
-Architecture
+### train flow
 
+* user start model train from browser
+* django recieve the "start train" message
+* django schedule spark.ml celery process to train model and return to user immediately.
+* browser query train status to django
+* django query train status from spark.ml celery process.
+* django feedback the train over status to browser
+
+### predict flow
+
+* user input prediction features on browser, then click submit
+* browser send prediction features to django
+* django call prediction api with prediction features
+* django feedback the prediction result to browser
 
 ```
 +---------+            +-------------+            +------------+
@@ -66,6 +79,7 @@ Architecture
 
 ```
 
+## technology stack
 
 category | name | comment
 ---------|----------|---------

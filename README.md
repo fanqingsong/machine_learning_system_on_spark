@@ -40,6 +40,9 @@ The data set is the classic iris data, which is only for demo, and this project 
 
 ## Architecture
 
+Generally, train process is time consumming, and predict process is quick.
+So set train flow as async mode, and predict flow as sync mode.
+
 ### train flow
 
 * user start model train from browser

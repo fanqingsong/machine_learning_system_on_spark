@@ -39,7 +39,9 @@ export class IrisExplore extends Component {
         } else if ("FAILURE" === status) {
             console.log("train process failed!!");
         } else {
-            this.queryTrainStatus(train_task_id)
+            setTimeout(() => {
+                this.queryTrainStatus(train_task_id)
+            }, 1000)
         }
      })
   }

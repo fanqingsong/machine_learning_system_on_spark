@@ -159,6 +159,12 @@ python3 manage.py runserver
 ### login page
 ![avatar](./snapshot/loginpage.png)
 
+### data management page
+![avatar](./snapshot/dataManagement.png)
+
+### data explore page
+![avatar](./snapshot/explore.png)
+
 ### model train page
 ![avatar](./snapshot/train.png)
 

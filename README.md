@@ -171,31 +171,20 @@ python3 manage.py runserver
 ### prediction page
 ![avatar](./snapshot/predict.png)
 
+## TO DO LIST
+
+### introduction pyenv 
+
+manage dependencies include python version and pip dependency
 
 ## Memo:
 
 ```bash
-（1）use this command to make new requirements.txt, if new package is installed.
+
+(1) use this command to make new requirements.txt, if new package is installed.
 pip3 freeze > requirements.txt
 
-（2）the following command for ml test
-cd ml_celery_research
-# start celery worker for test
-celery -A celerytask worker -l info
-
-# test celery worker running
-python3 celerytask.py
-
-# test kmeans stand-alone code
-python3 kmeans_demo.py
-
-# start celery worker for ml
-celery -A iris_cluster worker -l info
-
-# test ml celery worker running
-python3 iris_cluster.py
-
-(3) python version change
+(2) python version change
 
 sudo pip3 uninstall pip && sudo apt install python3-pip --reinstall
 or
@@ -205,17 +194,7 @@ python get-pip.py
 from
 https://zhuanlan.zhihu.com/p/37473690
 
-(5) python3.5 install
-wget https://www.python.org/ftp/python/3.5.3/Python-3.5.3.tgz
-tar -xvzf Python-3.5.3.tgz
-cd Python-3.5.3
-./configure
-make && make install
-
-from
-https://www.jianshu.com/p/95bd2622c8d5
-
-(6) sqlite3 error solution
+(3) sqlite3 error solution
 # sqlite install
 wget https://www.sqlite.org/2017/sqlite-autoconf-3170000.tar.gz --no-check-certificate
 tar xf  sqlite-autoconf-3170000.tar.gz
@@ -232,13 +211,13 @@ LD_RUN_PATH=/usr/local/sqlite3/lib sudo make install
 from
 https://www.cnblogs.com/i1991/p/9497259.html
 
-(7) python specific version install & pipenv usage
+(4) python specific version install & pipenv usage
 apt-get update
 apt-get install python3.7
 pip3 install pipenv
 pipenv install
 
-(8) django and celery integration
+(5) django and celery integration
 https://www.pythonf.cn/read/7143
 https://www.cnblogs.com/wdliu/p/9530219.html
 

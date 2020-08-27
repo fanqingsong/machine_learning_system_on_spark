@@ -98,19 +98,19 @@ category | name | comment
 
 ## Install
 
+### pyenv install
+[reference](https://github.com/pyenv/pyenv#installation)
+
 ### python3.5 install
 
 ```bash
-wget https://www.python.org/ftp/python/3.5.3/Python-3.5.3.tgz
-tar -xvzf Python-3.5.3.tgz
-cd Python-3.5.3
-./configure
-make && make install
+pyenv install 3.5.3
+pyenv global 3.5.3
 ```
 
 ### Install python package
 ```bash
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ### install redis
@@ -151,7 +151,7 @@ celery worker -A config -l debug
 
 ```bash
 cd ./backend
-python3 manage.py runserver
+python manage.py runserver
 ```
 
 ## snapshot
@@ -173,28 +173,15 @@ python3 manage.py runserver
 
 ## TO DO LIST
 
-### introduction pyenv 
-
-manage dependencies include python version and pip dependency
 
 ## Memo:
 
 ```bash
 
 (1) use this command to make new requirements.txt, if new package is installed.
-pip3 freeze > requirements.txt
+pip freeze > requirements.txt
 
-(2) python version change
-
-sudo pip3 uninstall pip && sudo apt install python3-pip --reinstall
-or
-curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-python get-pip.py
-
-from
-https://zhuanlan.zhihu.com/p/37473690
-
-(3) sqlite3 error solution
+(2) sqlite3 error solution
 # sqlite install
 wget https://www.sqlite.org/2017/sqlite-autoconf-3170000.tar.gz --no-check-certificate
 tar xf  sqlite-autoconf-3170000.tar.gz
@@ -210,15 +197,4 @@ LD_RUN_PATH=/usr/local/sqlite3/lib sudo make install
 
 from
 https://www.cnblogs.com/i1991/p/9497259.html
-
-(4) python specific version install & pipenv usage
-apt-get update
-apt-get install python3.7
-pip3 install pipenv
-pipenv install
-
-(5) django and celery integration
-https://www.pythonf.cn/read/7143
-https://www.cnblogs.com/wdliu/p/9530219.html
-
 ```

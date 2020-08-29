@@ -7,6 +7,8 @@ import axios from 'axios'
 import C3Chart from 'react-c3js';
 import 'c3/c3.css';
 
+import { ProgressBar } from 'react-bootstrap';
+
 
 export class IrisExplore extends Component {
   static propTypes = {
@@ -18,7 +20,8 @@ export class IrisExplore extends Component {
     super(props);
 
     this.state = {
-      cluster_number: 3
+      cluster_number: 3,
+      percentile: 0
     }
   }
 
@@ -31,11 +34,21 @@ export class IrisExplore extends Component {
 
      axios.get(`/api/train?train_task_id=${train_task_id}`).then((resp)=>{
         console.log("data=", resp.data);
+
+        let percentile = this.state.percentile;
+        if( percentile <= 80 )
+        {
+          percentile += 10;
+          this.setState({percentile: percentile});
+        }
+
         let respData = JSON.parse(resp.data);
         let status = respData['status']
         if ("SUCCESS" === status) {
             let irisData = respData['result'];
             this.props.setIrisCluster(irisData);
+
+            this.setState({percentile: 100});
         } else if ("FAILURE" === status) {
             console.log("train process failed!!");
         } else {
@@ -48,6 +61,7 @@ export class IrisExplore extends Component {
 
   startTrain(){
     console.log("======start train =======")
+    this.setState({percentile: 0});
 
     this.props.setIrisCluster([]);
 
@@ -59,6 +73,10 @@ export class IrisExplore extends Component {
       let respData = JSON.parse(resp.data);
 
       let train_task_id = respData["train_task_id"]
+
+      let percentile = this.state.percentile;
+      percentile += 10;
+      this.setState({percentile: percentile})
 
       this.queryTrainStatus(train_task_id)
     })
@@ -202,6 +220,7 @@ export class IrisExplore extends Component {
 
   render() {
     let cluster_number = this.state.cluster_number;
+    let percentile = this.state.percentile
 
     let sepalData = this.getSepalScatterData(cluster_number);
     let sepalAxis = this.getSepalScatterAxis();
@@ -222,6 +241,8 @@ export class IrisExplore extends Component {
               value={cluster_number}
             />
           </div>
+          <ProgressBar animated now={percentile} label={`${percentile}%`}/>
+          <br/>
           <div className="form-group">
             <button type="submit" className="btn btn-primary" onClick={this.startTrain.bind(this)}>start train</button>
           </div>

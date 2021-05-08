@@ -15,7 +15,7 @@ Django==2.1
 django-rest-knox==4.1.0
 djangorestframework==3.11.1
 dnspython==1.16.0
-eventlet==0.26.1
+eventlet==0.31.0
 filelock==3.0.12
 Flask==1.1.2
 Flask-SocketIO==4.3.1
